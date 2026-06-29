@@ -7,6 +7,13 @@ chooses the *angle*; the CTA is always the onboarding/activation call.
 
 from __future__ import annotations
 
+from typing import Protocol
+
+from engine.cohorts import EffectiveCohort
+from engine.models import Lead
+
+CTA = "a quick ~30-min onboarding call to get you to your first real win"
+
 # The honest, behavior-grounded angle for each cohort. Note DISENGAGED_NEVER_ENTERED uses a
 # truthful "you signed up but haven't dived in" framing — never an implied-usage line.
 COHORT_ANGLE = {
