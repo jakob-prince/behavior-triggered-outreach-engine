@@ -1,6 +1,6 @@
-"""End-to-end orchestration: detect → exclude → score → cohort → draft → enroll.
+"""End-to-end orchestration: detect -> exclude -> score -> cohort -> draft -> enroll.
 
-`previous_cohorts` (email → last effective cohort) enables the re-trigger behavior: a lead parked
+`previous_cohorts` (email -> last effective cohort) enables the re-trigger behavior: a lead parked
 in steady nurture that now shows a fresh urgent signal re-enters the rapid track.
 """
 
@@ -62,19 +62,19 @@ def run(
     # draft + enroll
     results: list[dict[str, str | float | bool]] = []
     for row in picked:
-        lead: Lead = row["lead"]  # type: ignore[assignment]
-        cohort: EffectiveCohort = row["cohort"]  # type: ignore[assignment]
-        prev = previous_cohorts.get(lead.user_email)
-        retrigger = prev is not None and should_retrigger(prev, cohort)
-        track = cadence_track(cohort)
-        message = draft_message(lead, cohort, llm)
-        outreach.enroll(lead, track, message)
+        picked_lead: Lead = row["lead"]  # type: ignore[assignment]
+        picked_cohort: EffectiveCohort = row["cohort"]  # type: ignore[assignment]
+        prev = previous_cohorts.get(picked_lead.user_email)
+        retrigger = prev is not None and should_retrigger(prev, picked_cohort)
+        track = cadence_track(picked_cohort)
+        message = draft_message(picked_lead, picked_cohort, llm)
+        outreach.enroll(picked_lead, track, message)
         results.append(
             {
-                "email": lead.user_email,
-                "cohort": cohort.value,
+                "email": picked_lead.user_email,
+                "cohort": picked_cohort.value,
                 "track": track,
-                "score": row["score"],  # type: ignore[arg-type]
+                "score": float(row["score"]),
                 "retrigger": retrigger,
             }
         )
