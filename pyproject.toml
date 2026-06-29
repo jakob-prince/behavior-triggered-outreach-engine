@@ -33,5 +33,5 @@ select = ["E", "F", "I", "UP", "B"]
 
 [tool.mypy]
 python_version = "3.10"
-strict = false
+strict = true
 files = ["src"]

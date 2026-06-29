@@ -6,6 +6,8 @@ in steady nurture that now shows a fresh urgent signal re-enters the rapid track
 
 from __future__ import annotations
 
+from typing import cast
+
 from engine.cohorts import (
     EffectiveCohort,
     cadence_track,
@@ -74,7 +76,7 @@ def run(
                 "email": picked_lead.user_email,
                 "cohort": picked_cohort.value,
                 "track": track,
-                "score": float(row["score"]),
+                "score": cast(float, row["score"]),
                 "retrigger": retrigger,
             }
         )
