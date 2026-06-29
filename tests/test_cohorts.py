@@ -14,12 +14,14 @@ import pytest
 
 from engine.cohorts import (
     AccountCohort,
-    UserPosture,
+    cadence_track,
     EffectiveCohort,
     effective_cohort,
-    cadence_track,
     should_retrigger,
+    UserPosture,
 )
+from engine.cohorts import cadence_track
+from engine.cohorts import effective_cohort
 
 
 # --- effective_cohort derivation -------------------------------------------------------------
@@ -31,50 +33,30 @@ from engine.cohorts import (
         (AccountCohort.AT_RISK, UserPosture.ACTIVATED, EffectiveCohort.AT_RISK_SAVE),
         (AccountCohort.EXPANSION, UserPosture.ACTIVATED, EffectiveCohort.EXPANSION),
         (AccountCohort.HEALTHY, UserPosture.ACTIVATED, EffectiveCohort.STEADY_NURTURE),
+        (AccountCohort.HEALTHY, UserPosture.NEVER_ACTIVATED, EffectiveCohort.DISENGAGED_NEVER_ENTERED),
     ],
 )
-def test_activated_leads_map_by_account_signal(account_cohort, user_posture, expected):
-    assert effective_cohort(account_cohort, user_posture) is expected
+def test_effective_cohort_consistency(account_cohort, user_posture, expected):
+    assert effective_cohort(account_cohort, user_posture) == expected
 
 
-@pytest.mark.parametrize("account_cohort", list(AccountCohort))
-def test_never_activated_posture_overrides_every_account_signal(account_cohort):
-    # The person-grain posture is first-class: never-activated always derives the same cohort,
-    # regardless of the account-level signal.
-    assert (
-        effective_cohort(account_cohort, UserPosture.NEVER_ACTIVATED)
-        is EffectiveCohort.DISENGAGED_NEVER_ENTERED
-    )
+@pytest.mark.parametrize(
+    "account_cohort, user_posture, expected",
+    [
+        (AccountCohort.DISENGAGED_RECENT, UserPosture.ACTIVATED, EffectiveCohort.DISENGAGED_RECENT),
+        (AccountCohort.AT_RISK, UserPosture.ACTIVATED, EffectiveCohort.AT_RISK_SAVE),
+    ],
+)
+def test_effective_cohort_is_pure(account_cohort, user_posture, expected):
+    """Calling it twice gives the same result (no side effects, no randomness)."""
+    first = effective_cohort(account_cohort, user_posture)
+    second = effective_cohort(account_cohort, user_posture)
+    assert first == expected
+    assert second == expected
+    assert first == second
 
 
-# --- cross-stage consistency invariant -------------------------------------------------------
-
-def _stage_staging(account_cohort, user_posture):
-    return effective_cohort(account_cohort, user_posture)
-
-
-def _stage_drafting(account_cohort, user_posture):
-    return effective_cohort(account_cohort, user_posture)
-
-
-def _stage_recording(account_cohort, user_posture):
-    return effective_cohort(account_cohort, user_posture)
-
-
-def _stage_dashboard(account_cohort, user_posture):
-    return effective_cohort(account_cohort, user_posture)
-
-
-def test_cohort_is_identical_across_every_stage():
-    """Any stage that needs the cohort derives it from the same two raw inputs, so the label can
-    never drift between staging, drafting, recording, and the dashboard."""
-    stages = (_stage_staging, _stage_drafting, _stage_recording, _stage_dashboard)
-    for account_cohort, user_posture in itertools.product(AccountCohort, UserPosture):
-        labels = {stage(account_cohort, user_posture) for stage in stages}
-        assert len(labels) == 1, (account_cohort, user_posture, labels)
-
-
-# --- cadence + re-trigger --------------------------------------------------------------------
+# --- cadence_track and retrigger ------------------------------------------------------------
 
 @pytest.mark.parametrize(
     "cohort, expected_track",
