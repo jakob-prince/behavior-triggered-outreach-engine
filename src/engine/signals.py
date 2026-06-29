@@ -6,8 +6,8 @@ account-grain signal and the person-grain posture that :func:`cohorts.effective_
 """
 
 from __future__ import annotations
-from collections.abc import Iterable
 
+from collections.abc import Iterable
 
 from engine.cohorts import AccountCohort, UserPosture
 from engine.models import Lead
@@ -19,29 +19,25 @@ MOMENTUM_DROP_FRACTION = 0.5    # this week <= half of last week => momentum dro
 ACTIVATION_MIN_EVENTS = 2       # <2 lifetime events => never really activated
 
 
-# --- individual detectors --------------------------------------------------------------------
-def is_never_activated(lead: Lead) -> bool:
-    return lead.total_events < ACTIVATION_MIN_EVENTS
-
-
+# --- individual detectors --------------------------------------------------
 def is_credits_low(lead: Lead) -> bool:
-    if lead.credits_granted <= 0:
-        return False
-    return lead.credits_remaining / lead.credits_granted <= LOW_CREDIT_FRACTION
+    return lead.credits_remaining <= lead.credits_granted * LOW_CREDIT_FRACTION
 
 
 def went_quiet(lead: Lead) -> bool:
-    return lead.total_events >= ACTIVATION_MIN_EVENTS and lead.last_active_days_ago >= QUIET_DAYS
+    return lead.total_events > ACTIVATION_MIN_EVENTS and lead.last_active_days_ago > QUIET_DAYS
 
 
 def momentum_dropped(lead: Lead) -> bool:
-    if lead.events_prev_7d == 0:
-        return False
-    return lead.events_last_7d <= lead.events_prev_7d * MOMENTUM_DROP_FRACTION
+    return lead.events_prev_7d > 0 and lead.events_last_7d <= lead.events_prev_7d * MOMENTUM_DROP_FRACTION
 
 
 def is_expanding(lead: Lead) -> bool:
-    return lead.events_prev_7d > 0 and lead.events_last_7d > lead.events_prev_7d
+    return lead.events_last_7d > lead.events_prev_7d
+
+
+def is_never_activated(lead: Lead) -> bool:
+    return lead.total_events < ACTIVATION_MIN_EVENTS
 
 
 # --- classifiers -----------------------------------------------------------------------------
