@@ -6,7 +6,6 @@ in steady nurture that now shows a fresh urgent signal re-enters the rapid track
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional
 
 from engine.cohorts import cadence_track, effective_cohort, should_retrigger, EffectiveCohort
 from engine.exclusion import is_excluded
@@ -18,18 +17,18 @@ from engine.models import Lead
 
 
 def run(
-    leads: List[Lead],
-    llm: Optional[LLMClient] = None,
-    outreach: Optional[OutreachClient] = None,
-    previous_cohorts: Optional[Dict[str, EffectiveCohort]] = None,
+    leads: list[Lead],
+    llm: LLMClient | None = None,
+    outreach: OutreachClient | None = None,
+    previous_cohorts: dict[str, EffectiveCohort | None] = None,
     limit: int = 10,
-) -> List[Dict]:
+) -> list[Dict]:
     llm = llm or FakeLLMClient()
     outreach = outreach or ConsoleOutreachClient()
     previous_cohorts = previous_cohorts or {}
 
     # detect + exclude + cohort + score
-    candidates: List[Dict] = []
+    candidates: list[Dict] = []
     for lead in leads:
         if is_excluded(lead):
             continue
@@ -44,7 +43,7 @@ def run(
     picked = shortlist(candidates, limit=limit)
 
     # draft + enroll
-    results: List[Dict] = []
+    results: list[Dict] = []
     for row in picked:
         lead, cohort = row["lead"], row["cohort"]
         prev = previous_cohorts.get(lead.user_email)
