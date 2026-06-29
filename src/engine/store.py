@@ -16,7 +16,7 @@ DEFAULT_PATH = "leads.json"
 
 
 def save_leads(leads: list[Lead], path: str = DEFAULT_PATH) -> None:
-    Path(path).write_text(json.dumps([asdict(l) for l in leads], indent=2))
+    Path(path).write_text(json.dumps([asdict(lead) for lead in leads], indent=2))
 
 
 def load_leads(path: str = DEFAULT_PATH) -> list[Lead]:
