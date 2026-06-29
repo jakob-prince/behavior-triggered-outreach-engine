@@ -39,29 +39,19 @@ def run(
     outreach: OutreachClient | None = None,
     previous_cohorts: dict[str, EffectiveCohort] | None = None,
     limit: int = 10,
-) -> list[dict]:
+) -> list[dict[str, str | float | bool]]:
     llm = llm or FakeLLMClient()
     outreach = outreach or ConsoleOutreachClient()
     previous_cohorts = previous_cohorts or {}
 
-    # detect
-    signals = [
-        {
-            "lead": lead,
-            "account_cohort": classify_account_cohort(lead),
-            "user_posture": classify_user_posture(lead),
-        }
-        for lead in leads
-    ]
-
-    # exclude
-    not_excluded = [s for s in signals if not is_excluded(s["lead"])]
-
-    # score
-    candidates = []
-    for row in not_excluded:
-        lead = row["lead"]
-        cohort = effective_cohort(row["account_cohort"], row["user_posture"])
+    # detect + exclude + score in one pass
+    candidates: list[dict[str, object]] = []
+    for lead in leads:
+        if is_excluded(lead):
+            continue
+        acct = classify_account_cohort(lead)
+        posture = classify_user_posture(lead)
+        cohort = effective_cohort(acct, posture)
         candidates.append(
             {"lead": lead, "cohort": cohort, "score": score_lead(lead, cohort)}
         )
@@ -70,9 +60,10 @@ def run(
     picked = shortlist(candidates, limit=limit)
 
     # draft + enroll
-    results: list[dict] = []
+    results: list[dict[str, str | float | bool]] = []
     for row in picked:
-        lead, cohort = row["lead"], row["cohort"]
+        lead: Lead = row["lead"]  # type: ignore[assignment]
+        cohort: EffectiveCohort = row["cohort"]  # type: ignore[assignment]
         prev = previous_cohorts.get(lead.user_email)
         retrigger = prev is not None and should_retrigger(prev, cohort)
         track = cadence_track(cohort)
@@ -83,7 +74,7 @@ def run(
                 "email": lead.user_email,
                 "cohort": cohort.value,
                 "track": track,
-                "score": row["score"],
+                "score": row["score"],  # type: ignore[arg-type]
                 "retrigger": retrigger,
             }
         )
