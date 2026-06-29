@@ -7,7 +7,6 @@ Priority is dominated by *urgency* (the effective cohort), then nudged by how wa
 
 from __future__ import annotations
 
-
 from engine.cohorts import EffectiveCohort
 from engine.models import Lead
 
