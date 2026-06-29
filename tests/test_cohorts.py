@@ -29,7 +29,11 @@ from engine.cohorts import (
         (AccountCohort.AT_RISK, UserPosture.ACTIVATED, EffectiveCohort.AT_RISK_SAVE),
         (AccountCohort.EXPANSION, UserPosture.ACTIVATED, EffectiveCohort.EXPANSION),
         (AccountCohort.HEALTHY, UserPosture.ACTIVATED, EffectiveCohort.STEADY_NURTURE),
-        (AccountCohort.HEALTHY, UserPosture.NEVER_ACTIVATED, EffectiveCohort.DISENGAGED_NEVER_ENTERED),
+        (
+            AccountCohort.HEALTHY,
+            UserPosture.NEVER_ACTIVATED,
+            EffectiveCohort.DISENGAGED_NEVER_ENTERED,
+        ),
     ],
 )
 def test_effective_cohort_consistency(account_cohort, user_posture, expected):
