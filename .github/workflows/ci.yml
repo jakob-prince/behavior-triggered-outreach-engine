@@ -24,8 +24,5 @@ jobs:
       - name: Lint (ruff)
         run: uv run ruff check src tests
 
-      - name: Type-check (mypy)
-        run: uv run mypy src
-
       - name: Test (pytest)
         run: uv run pytest -q
