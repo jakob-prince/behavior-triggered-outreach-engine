@@ -29,7 +29,10 @@ def went_quiet(lead: Lead) -> bool:
 
 
 def momentum_dropped(lead: Lead) -> bool:
-    return lead.events_prev_7d > 0 and lead.events_last_7d <= lead.events_prev_7d * MOMENTUM_DROP_FRACTION
+    return (
+        lead.events_prev_7d > 0
+        and lead.events_last_7d <= lead.events_prev_7d * MOMENTUM_DROP_FRACTION
+    )
 
 
 def is_expanding(lead: Lead) -> bool:
