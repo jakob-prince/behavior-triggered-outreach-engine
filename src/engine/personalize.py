@@ -26,22 +26,25 @@ COHORT_ANGLE = {
     EffectiveCohort.STEADY_NURTURE: "wanted to check in on how things are going",
 }
 
+# Type alias for the LLM context dict passed to draft().
+Context = dict[str, str | int]
+
 
 class LLMClient(Protocol):
-    def draft(self, context: dict) -> str: ...
+    def draft(self, context: Context) -> str: ...
 
 
 class FakeLLMClient:
     """Deterministic stand-in for a real LLM — no network, stable output for tests."""
 
-    def draft(self, context: dict) -> str:
+    def draft(self, context: Context) -> str:
         return (
             f"Hi {context['name']}, I {context['angle']}. "
             f"Would you be open to {context['cta']}?"
         )
 
 
-def build_context(lead: Lead, cohort: EffectiveCohort) -> dict:
+def build_context(lead: Lead, cohort: EffectiveCohort) -> Context:
     return {
         "name": lead.name or "there",
         "angle": COHORT_ANGLE[cohort],
