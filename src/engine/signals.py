@@ -6,8 +6,8 @@ account-grain signal and the person-grain posture that :func:`cohorts.effective_
 """
 
 from __future__ import annotations
+from collections.abc import Iterable
 
-from typing import Dict, Iterable, List
 
 from engine.cohorts import AccountCohort, UserPosture
 from engine.models import Lead
@@ -60,7 +60,7 @@ def classify_account_cohort(lead: Lead) -> AccountCohort:
     return AccountCohort.HEALTHY
 
 
-def detect(leads: Iterable[Lead]) -> List[Dict]:
+def detect(leads: Iterable[Lead]) -> list[Dict]:
     """Classify each lead into (account_cohort, user_posture)."""
     return [
         {
