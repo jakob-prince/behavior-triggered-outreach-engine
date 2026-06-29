@@ -8,8 +8,6 @@ These are the two properties worth proving in a demo repo:
    track.
 """
 
-import itertools
-
 import pytest
 
 from engine.cohorts import (
@@ -20,8 +18,6 @@ from engine.cohorts import (
     should_retrigger,
     UserPosture,
 )
-from engine.cohorts import cadence_track
-from engine.cohorts import effective_cohort
 
 
 # --- effective_cohort derivation -------------------------------------------------------------
