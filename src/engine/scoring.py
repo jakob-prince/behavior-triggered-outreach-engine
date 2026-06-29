@@ -7,7 +7,6 @@ Priority is dominated by *urgency* (the effective cohort), then nudged by how wa
 
 from __future__ import annotations
 
-from typing import Dict, List
 
 from engine.cohorts import EffectiveCohort
 from engine.models import Lead
@@ -32,5 +31,5 @@ def score_lead(lead: Lead, cohort: EffectiveCohort) -> float:
     return round(score, 2)
 
 
-def shortlist(scored: List[Dict], limit: int = 10) -> List[Dict]:
+def shortlist(scored: list[Dict], limit: int = 10) -> list[Dict]:
     return sorted(scored, key=lambda r: r["score"], reverse=True)[:limit]
