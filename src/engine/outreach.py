@@ -7,7 +7,7 @@ credentials.
 
 from __future__ import annotations
 
-from typing import List, Protocol, Tuple
+from typing import Protocol
 
 from engine.models import Lead
 
@@ -20,7 +20,7 @@ class ConsoleOutreachClient:
     """Prints enrollments instead of calling a real outreach API."""
 
     def __init__(self) -> None:
-        self.enrolled: List[Tuple[str, str]] = []
+        self.enrolled: list[tuple[str, str]] = []
 
     def enroll(self, lead: Lead, cadence_track: str, message: str) -> None:
         self.enrolled.append((lead.user_email, cadence_track))
