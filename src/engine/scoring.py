@@ -31,5 +31,5 @@ def score_lead(lead: Lead, cohort: EffectiveCohort) -> float:
     return round(score, 2)
 
 
-def shortlist(scored: list[Dict], limit: int = 10) -> list[Dict]:
+def shortlist(scored: list[dict], limit: int = 10) -> list[dict]:
     return sorted(scored, key=lambda r: r["score"], reverse=True)[:limit]
