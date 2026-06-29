@@ -6,35 +6,49 @@ in steady nurture that now shows a fresh urgent signal re-enters the rapid track
 
 from __future__ import annotations
 
-
-from engine.cohorts import cadence_track, effective_cohort, should_retrigger, EffectiveCohort
+from engine.cohorts import (
+    cadence_track,
+    effective_cohort,
+    should_retrigger,
+    EffectiveCohort,
+)
 from engine.exclusion import is_excluded
+from engine.models import Lead
 from engine.outreach import ConsoleOutreachClient, OutreachClient
 from engine.personalize import FakeLLMClient, LLMClient, draft_message
 from engine.scoring import score_lead, shortlist
 from engine.signals import classify_account_cohort, classify_user_posture
-from engine.models import Lead
 
 
 def run(
     leads: list[Lead],
     llm: LLMClient | None = None,
     outreach: OutreachClient | None = None,
-    previous_cohorts: dict[str, EffectiveCohort | None] = None,
+    previous_cohorts: dict[str, EffectiveCohort] | None = None,
     limit: int = 10,
 ) -> list[dict]:
     llm = llm or FakeLLMClient()
     outreach = outreach or ConsoleOutreachClient()
     previous_cohorts = previous_cohorts or {}
 
-    # detect + exclude + cohort + score
-    candidates: list[dict] = []
-    for lead in leads:
-        if is_excluded(lead):
-            continue
-        cohort = effective_cohort(
-            classify_account_cohort(lead), classify_user_posture(lead)
-        )
+    # detect
+    signals = [
+        {
+            "lead": lead,
+            "account_cohort": classify_account_cohort(lead),
+            "user_posture": classify_user_posture(lead),
+        }
+        for lead in leads
+    ]
+
+    # exclude
+    not_excluded = [s for s in signals if not is_excluded(s["lead"])]
+
+    # score
+    candidates = []
+    for row in not_excluded:
+        lead = row["lead"]
+        cohort = effective_cohort(row["account_cohort"], row["user_posture"])
         candidates.append(
             {"lead": lead, "cohort": cohort, "score": score_lead(lead, cohort)}
         )
