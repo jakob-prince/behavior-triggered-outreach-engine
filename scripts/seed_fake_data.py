@@ -7,7 +7,6 @@ could swap in Faker for richer fake data. NO real emails, domains, project IDs, 
 from __future__ import annotations
 
 import random
-from typing import List
 
 from engine.models import Lead
 
@@ -15,9 +14,9 @@ FIRST_NAMES = ["Alex", "Sam", "Jordan", "Taylor", "Morgan", "Riley", "Casey", "J
 DOMAINS = ["acme.test", "globex.test", "initech.test", "umbrella.test"]
 
 
-def generate_leads(n: int = 30, seed: int = 42) -> List[Lead]:
+def generate_leads(n: int = 30, seed: int = 42) -> list[Lead]:
     rng = random.Random(seed)
-    leads: List[Lead] = []
+    leads: list[Lead] = []
     for i in range(n):
         signed = rng.randint(1, 60)
         never = rng.random() < 0.25
