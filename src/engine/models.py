@@ -7,7 +7,6 @@ and dependency-free. In a real implementation these would be derived from event/
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import List
 
 
 @dataclass
@@ -22,4 +21,4 @@ class Lead:
     events_prev_7d: int
     credits_remaining: float
     credits_granted: float
-    integrations_connected: List[str] = field(default_factory=list)
+    integrations_connected: list[str] = field(default_factory=list)
