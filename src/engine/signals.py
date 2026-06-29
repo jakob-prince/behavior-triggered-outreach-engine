@@ -60,7 +60,7 @@ def classify_account_cohort(lead: Lead) -> AccountCohort:
     return AccountCohort.HEALTHY
 
 
-def detect(leads: Iterable[Lead]) -> list[Dict]:
+def detect(leads: Iterable[Lead]) -> list[dict]:
     """Classify each lead into (account_cohort, user_posture)."""
     return [
         {
