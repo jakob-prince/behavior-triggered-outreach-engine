@@ -22,13 +22,13 @@ def run(
     outreach: OutreachClient | None = None,
     previous_cohorts: dict[str, EffectiveCohort | None] = None,
     limit: int = 10,
-) -> list[Dict]:
+) -> list[dict]:
     llm = llm or FakeLLMClient()
     outreach = outreach or ConsoleOutreachClient()
     previous_cohorts = previous_cohorts or {}
 
     # detect + exclude + cohort + score
-    candidates: list[Dict] = []
+    candidates: list[dict] = []
     for lead in leads:
         if is_excluded(lead):
             continue
@@ -43,7 +43,7 @@ def run(
     picked = shortlist(candidates, limit=limit)
 
     # draft + enroll
-    results: list[Dict] = []
+    results: list[dict] = []
     for row in picked:
         lead, cohort = row["lead"], row["cohort"]
         prev = previous_cohorts.get(lead.user_email)
