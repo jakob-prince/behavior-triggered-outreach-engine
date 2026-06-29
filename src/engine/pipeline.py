@@ -6,18 +6,21 @@ in steady nurture that now shows a fresh urgent signal re-enters the rapid track
 
 from __future__ import annotations
 
-from engine.cohorts import (
-    cadence_track,
-    effective_cohort,
-    should_retrigger,
-    EffectiveCohort,
-)
+from engine.cohorts import EffectiveCohort
+from engine.cohorts import cadence_track
+from engine.cohorts import effective_cohort
+from engine.cohorts import should_retrigger
 from engine.exclusion import is_excluded
 from engine.models import Lead
-from engine.outreach import ConsoleOutreachClient, OutreachClient
-from engine.personalize import FakeLLMClient, LLMClient, draft_message
-from engine.scoring import score_lead, shortlist
-from engine.signals import classify_account_cohort, classify_user_posture
+from engine.outreach import ConsoleOutreachClient
+from engine.outreach import OutreachClient
+from engine.personalize import FakeLLMClient
+from engine.personalize import LLMClient
+from engine.personalize import draft_message
+from engine.scoring import score_lead
+from engine.scoring import shortlist
+from engine.signals import classify_account_cohort
+from engine.signals import classify_user_posture
 
 
 def run(
