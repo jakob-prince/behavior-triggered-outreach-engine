@@ -7,7 +7,7 @@ chooses the *angle*; the CTA is always the onboarding/activation call.
 
 from __future__ import annotations
 
-from typing import Dict, Protocol
+from typing import Protocol
 
 from engine.cohorts import EffectiveCohort
 from engine.models import Lead
